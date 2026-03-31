@@ -1,0 +1,6 @@
+pynvim
+debugpy
+pyright
+jupyter
+pyvisa
+

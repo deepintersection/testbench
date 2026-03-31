@@ -1,0 +1,34 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "testbench"
+version = "0.1.0"
+description = "Nanosatellite IoT-5G hardware validation platform"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.110",
+    "uvicorn[standard]>=0.29",
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "jinja2>=3.1",
+    "python-multipart>=0.0.9",
+    "aiofiles>=23.0",
+    "click>=8.1",
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+instruments = ["pyvisa>=1.14", "pyvisa-py>=0.7"]
+dev = ["pytest>=8.0", "httpx>=0.27"]
+
+[project.scripts]
+sat = "testbench.cli:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/testbench"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
