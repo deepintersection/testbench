@@ -70,3 +70,57 @@ class VNAPort(ABC):
 
     @abstractmethod
     def capture_screenshot(self, filepath: str) -> str: ...
+
+
+# ─── Null / Stub adapters for testing without hardware ─────────
+
+
+class NullTelemetryPort(TelemetryPort):
+    def read(self, instrument_id: str, channel: str) -> float:
+        return 0.0
+
+    def is_connected(self, instrument_id: str) -> bool:
+        return True
+
+
+class NullInstrumentPort(InstrumentPort):
+    def connect(self, instrument_id: str) -> None:
+        pass
+
+    def disconnect(self, instrument_id: str) -> None:
+        pass
+
+    def send_command(self, instrument_id: str, command: str) -> str:
+        return ""
+
+    def measure(
+        self, instrument_id: str, measurement_type: str, channel: str = ""
+    ) -> float:
+        return 0.0
+
+    def capture_screenshot(self, instrument_id: str, filepath: str) -> str:
+        return filepath
+
+    def capture_trace(
+        self, instrument_id: str, filepath: str, format: str = "csv"
+    ) -> str:
+        return filepath
+
+
+class NullVNAPort(VNAPort):
+    def configure_sweep(
+        self, freq_start_hz: float, freq_stop_hz: float, points: int = 201
+    ) -> None:
+        pass
+
+    def measure_s2p(self, filepath: str) -> str:
+        return filepath
+
+    def measure_s4p(self, filepath: str) -> str:
+        return filepath
+
+    def get_marker_value(self, marker: int, parameter: str = "S21") -> complex:
+        return complex(0, 0)
+
+    def capture_screenshot(self, filepath: str) -> str:
+        return filepath
