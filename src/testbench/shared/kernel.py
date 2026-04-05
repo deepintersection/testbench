@@ -102,12 +102,12 @@ class TestMeasurement:
     raw_data_ref: str = ""  # path to screenshot, trace, waveform
 
 
-@dataclass
+@dataclass(frozen=True)
 class TestResult:
     """Final result of a test execution."""
 
     passed: bool
-    measurements: list[TestMeasurement] = field(default_factory=list)
+    measurements: tuple[TestMeasurement, ...] = ()
     notes: str = ""
     error: str = ""
 
@@ -127,3 +127,27 @@ class PhysicalQuantity:
         if self.mode == MeasurementMode.DC:
             return f"{self.value:.4g} {self.unit.value}"
         return f"{self.value:.4g} {self.unit.value}{self.mode.value}"
+
+
+# ─── Tolerance ──────────────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class Tolerance:
+    nominal: float
+    upper: float
+    lower: float
+    unit: Unit
+
+    @classmethod
+    def symmetric(cls, nominal: float, delta: float, unit: Unit) -> Tolerance:
+        return cls(
+            nominal=nominal, upper=nominal + delta, lower=nominal - delta, unit=unit
+        )
+
+    @classmethod
+    def percentage(cls, nominal: float, pct: float, unit: Unit) -> Tolerance:
+        return cls.symmetric(nominal, nominal * pct / 100.0, unit)
+
+    def contains(self, value: float) -> bool:
+        return self.lower <= value <= self.upper
