@@ -110,3 +110,20 @@ class TestResult:
     measurements: list[TestMeasurement] = field(default_factory=list)
     notes: str = ""
     error: str = ""
+
+
+# ─── Physical Quantity ──────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class PhysicalQuantity:
+    """Immutable measured value with unit and mode."""
+
+    value: float
+    unit: Unit
+    mode: MeasurementMode = MeasurementMode.DC
+
+    def __str__(self) -> str:
+        if self.mode == MeasurementMode.DC:
+            return f"{self.value:.4g} {self.unit.value}"
+        return f"{self.value:.4g} {self.unit.value}{self.mode.value}"
