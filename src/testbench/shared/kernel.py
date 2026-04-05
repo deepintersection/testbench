@@ -6,6 +6,7 @@ from __future__ import annotations
 import uuid
 from datetime import datetime, timezone
 from enum import Enum
+from dataclasses import dataclass, field
 
 # ─── Identifiers ───────────────────────────────────────────────
 
@@ -79,3 +80,33 @@ class MeasurementMode(str, Enum):
     MIN = "min"  # Minimum over capture window
     MAX = "max"  # Maximum over capture window
     INSTANTANEOUS = "inst"  # Single-shot sample
+
+
+# ─── Measurement & Test Result ─────────────────────────────────
+# These live in the shared kernel because every subsystem's test
+# implementations produce them, every registry consumes them, and
+# the execution engine stores them. One definition, not three copies.
+
+
+@dataclass(frozen=True)
+class TestMeasurement:
+    """A single parameter measured during a test."""
+
+    parameter_name: str
+    measured_value: float
+    unit: Unit
+    mode: MeasurementMode = MeasurementMode.DC
+    nominal_value: float | None = None
+    lower_limit: float | None = None
+    upper_limit: float | None = None
+    raw_data_ref: str = ""  # path to screenshot, trace, waveform
+
+
+@dataclass
+class TestResult:
+    """Final result of a test execution."""
+
+    passed: bool
+    measurements: list[TestMeasurement] = field(default_factory=list)
+    notes: str = ""
+    error: str = ""
