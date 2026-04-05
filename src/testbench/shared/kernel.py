@@ -151,3 +151,12 @@ class Tolerance:
 
     def contains(self, value: float) -> bool:
         return self.lower <= value <= self.upper
+
+
+# ─── Base Domain Event ──────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class DomainEvent:
+    event_id: str = field(default_factory=generate_id)
+    occurred_at: datetime = field(default_factory=utc_now)
