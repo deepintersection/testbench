@@ -7,6 +7,7 @@ import uuid
 from datetime import datetime, timezone
 from enum import Enum
 from dataclasses import dataclass, field
+from typing import Optional
 
 # ─── Identifiers ───────────────────────────────────────────────
 
@@ -160,3 +161,14 @@ class Tolerance:
 class DomainEvent:
     event_id: str = field(default_factory=generate_id)
     occurred_at: datetime = field(default_factory=utc_now)
+
+
+# ─── Hardware Revision ──────────────────────────────────────────
+
+
+@dataclass(frozen=True)
+class HardwareRevision:
+    serial_number: str
+    revision: str
+    pcb_version: Optional[str] = None
+    firmware_version: Optional[str] = None
