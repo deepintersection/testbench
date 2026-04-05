@@ -45,3 +45,28 @@ class InstrumentPort(ABC):
         format: csv, s2p, s4p, wfm, etc.
         """
         ...
+
+
+class VNAPort(ABC):
+    """Vector Network Analyzer for S-parameter measurement."""
+
+    @abstractmethod
+    def configure_sweep(
+        self, freq_start_hz: float, freq_stop_hz: float, points: int = 201
+    ) -> None: ...
+
+    @abstractmethod
+    def measure_s2p(self, filepath: str) -> str:
+        """Capture 2-port S-parameters to Touchstone file. Returns path."""
+        ...
+
+    @abstractmethod
+    def measure_s4p(self, filepath: str) -> str:
+        """Capture 4-port S-parameters to Touchstone file. Returns path."""
+        ...
+
+    @abstractmethod
+    def get_marker_value(self, marker: int, parameter: str = "S21") -> complex: ...
+
+    @abstractmethod
+    def capture_screenshot(self, filepath: str) -> str: ...
