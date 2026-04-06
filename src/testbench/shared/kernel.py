@@ -4,9 +4,10 @@ Shared Kernel — value objects and types used across all bounded contexts.
 
 from __future__ import annotations
 import uuid
+from abc import ABC, abstractmethod
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from dataclasses import dataclass, field
 from typing import Optional
 
 # ─── Identifiers ───────────────────────────────────────────────
@@ -89,14 +90,18 @@ class MeasurementMode(str, Enum):
 # the execution engine stores them. One definition, not three copies.
 
 
-@dataclass(frozen=True)
+@dataclass
 class TestMeasurement:
-    """A single parameter measured during a test."""
+    """A single parameter measured during a test.
+
+    Mutable during test execution (tests append raw_data_ref after capture).
+    Becomes immutable once wrapped in a frozen TestResult.
+    """
 
     parameter_name: str
     measured_value: float
-    unit: Unit
-    mode: MeasurementMode = MeasurementMode.DC
+    unit: str
+    mode: str = "dc"  # MeasurementMode value
     nominal_value: float | None = None
     lower_limit: float | None = None
     upper_limit: float | None = None
@@ -105,12 +110,65 @@ class TestMeasurement:
 
 @dataclass(frozen=True)
 class TestResult:
-    """Final result of a test execution."""
+    """Final result of a test execution — immutable once returned."""
 
     passed: bool
     measurements: tuple[TestMeasurement, ...] = ()
     notes: str = ""
     error: str = ""
+
+
+# ─── Repository Interfaces (Percival: domain defines, infra implements) ──
+
+
+class TestDefinitionRepository(ABC):
+    """Port for persisting test definitions.
+
+    The domain defines this interface; the persistence layer implements it.
+    Subsystem registries call this to seed definitions, without knowing
+    whether the storage is SQLAlchemy, in-memory, or a flat file.
+    """
+
+    @abstractmethod
+    def find_by_code(self, code: str) -> dict | None: ...
+
+    @abstractmethod
+    def find_by_scope(self, subsystem_scope: str) -> list[dict]: ...
+
+    @abstractmethod
+    def save(
+        self,
+        code: str,
+        name: str,
+        description: str,
+        subsystem_scope: str,
+        estimated_duration_seconds: int,
+        runnable_during_stress: bool = True,
+    ) -> None: ...
+
+    @abstractmethod
+    def exists(self, code: str) -> bool: ...
+
+
+class MonitorChannelRepository(ABC):
+    """Port for persisting DUT monitor channels and thresholds."""
+
+    @abstractmethod
+    def find_by_dut(self, dut_id: str, channel_name: str) -> dict | None: ...
+
+    @abstractmethod
+    def save_channel(
+        self,
+        dut_id: str,
+        channel_name: str,
+        channel_type: str,
+        unit: str,
+        subsystem: str,
+        nominal: tuple[float, float],
+        warning: tuple[float, float],
+        abort: tuple[float, float],
+        context: str = "ambient",
+    ) -> None: ...
 
 
 # ─── Physical Quantity ──────────────────────────────────────────

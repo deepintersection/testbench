@@ -3,4 +3,4 @@ debugpy
 pyright
 jupyter
 pyvisa
-
+sqlalchemy
