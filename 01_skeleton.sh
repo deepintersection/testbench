@@ -26,8 +26,6 @@ mkdir -p src/testbench/dut_monitoring/application
 
 # Supporting bounded contexts
 mkdir -p src/testbench/instruments/drivers
-mkdir -p src/testbench/pcb_harness/domain
-mkdir -p src/testbench/signal_integrity/domain
 
 # Subsystem placeholders (implemented later)
 mkdir -p src/testbench/subsystems/rcu/domain
@@ -36,16 +34,12 @@ mkdir -p src/testbench/subsystems/eps/domain
 mkdir -p src/testbench/subsystems/eps/tests
 mkdir -p src/testbench/subsystems/payload_5g/domain
 mkdir -p src/testbench/subsystems/payload_5g/tests
-mkdir -p src/testbench/subsystems/spacewire/domain
-mkdir -p src/testbench/subsystems/spacewire/tests
 mkdir -p src/testbench/subsystems/obc/domain
 mkdir -p src/testbench/subsystems/obc/tests
 mkdir -p src/testbench/subsystems/comms_ttc/domain
 mkdir -p src/testbench/subsystems/comms_ttc/tests
 mkdir -p src/testbench/subsystems/adcs/domain
 mkdir -p src/testbench/subsystems/adcs/tests
-mkdir -p src/testbench/subsystems/thermal/domain
-mkdir -p src/testbench/subsystems/thermal/tests
 
 # Create empty __init__.py in every Python package
 find src/testbench -type d \
