@@ -12,12 +12,12 @@ Ubiquitous language:
 
 from __future__ import annotations
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 # ─── RCU Boot States ──────────────────────────────────────────
 
 
-class RCUBootState(str, Enum):
+class RCUBootState(StrEnum):
     OFF = "off"
     BOOTLOADER = "bootloader"
     LOADING_OBSW = "loading_obsw"
